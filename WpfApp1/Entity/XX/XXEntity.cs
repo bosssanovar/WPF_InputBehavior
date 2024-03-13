@@ -13,6 +13,8 @@
 
         public TextVO Text { get; set; } = new(Text_InitValue);
 
+        public Text2VO Text2 { get; set; } = new(Text_InitValue);
+
         public NumberVO Number { get; set; } = new(Number_InitValue);
 
         public BoolVO Bool
@@ -47,6 +49,7 @@
         public void Init()
         {
             Text = new TextVO(Text_InitValue);
+            Text2 = new Text2VO(Text_InitValue);
             Number = new NumberVO(Number_InitValue);
             Bool = new BoolVO(Bool_InitValue);
             SomeEnum = new SomeEnumVO(SomeEnum_InitValue);

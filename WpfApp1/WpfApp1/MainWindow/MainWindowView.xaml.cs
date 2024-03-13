@@ -68,6 +68,28 @@ namespace WpfApp1.MainWindow
                 .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.DistinctUntilChanged)
                 .AddTo(_disposable);
 
+            Text2 = _model.Entity.ToReactivePropertySlimAsSynchronized(
+                x => x.Value,
+                x => x.Text2.Content,
+                x =>
+                {
+                    var corrected = Text2VO.CurrectValue(x);
+                    _model.Entity.Value.Text2 = new(corrected);
+
+                    _model.ForceNotify();
+
+                    return _model.Entity.Value;
+                },
+                ReactivePropertyMode.DistinctUntilChanged)
+                .AddTo(_disposable);
+
+            IsText2Changed =
+                _model.Entity.CombineLatest(
+                    _model.EntitySnapShot,
+                    (entity, snapShot) => entity.Text2 != snapShot.Text2)
+                .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.DistinctUntilChanged)
+                .AddTo(_disposable);
+
             Number = _model.Entity.ToReactivePropertySlimAsSynchronized(
                 x => x.Value,
                 x => x.Number.Content,

@@ -45,6 +45,16 @@ namespace WpfApp1.MainWindow
         public ReadOnlyReactivePropertySlim<bool> IsTextChanged { get; }
 
         /// <summary>
+        /// Text設定
+        /// </summary>
+        public ReactivePropertySlim<string> Text2 { get; }
+
+        /// <summary>
+        /// Text設定が変更されたか
+        /// </summary>
+        public ReadOnlyReactivePropertySlim<bool> IsText2Changed { get; }
+
+        /// <summary>
         /// Number設定
         /// </summary>
         public ReactivePropertySlim<int> Number { get; }

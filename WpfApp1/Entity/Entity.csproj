@@ -15,11 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <Compile Remove="AAA\**" />
+    <EmbeddedResource Remove="AAA\**" />
+    <None Remove="AAA\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AAA\" />
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 </Project>

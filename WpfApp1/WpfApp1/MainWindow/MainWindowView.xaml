@@ -14,7 +14,7 @@
         <wpfLib:BoolToColorConverter x:Key="boolToColorConverter"/>
         <BooleanToVisibilityConverter x:Key="boolToVisibility"/>
     </Window.Resources>
-    
+
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -28,30 +28,43 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Margin="5" HorizontalAlignment="Left" Text="文字入力（半角10/全角5文字以下）"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" Margin="5" HorizontalAlignment="Left" Text="数値入力（500以下）"/>
-            <TextBlock Grid.Column="0" Grid.Row="2" Margin="5" HorizontalAlignment="Left" Text="チェックボックス入力"/>
-            <TextBlock Grid.Column="0" Grid.Row="3" Margin="5" HorizontalAlignment="Left">
+            <TextBlock Grid.Column="0" Grid.Row="0" Margin="5" HorizontalAlignment="Left" Text="文字入力（半角英数のみ10文字以下）"/>
+            <StackPanel Grid.Column="0" Grid.Row="1" Margin="5" Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Left" Text="文字入力"/>
+                <TextBlock HorizontalAlignment="Left" Text="（半角8/全角4文字以下）"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock HorizontalAlignment="Left" Text="（第1水準漢字まで, 第2水準は入力不可→ex."/>
+                    <TextBox IsReadOnly="True" Width="20" Text="乖"/>
+                    <TextBlock HorizontalAlignment="Left" Text="）"/>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Grid.Column="0" Grid.Row="2" Margin="5" HorizontalAlignment="Left" Text="数値入力（-100.0～95.5）"/>
+            <TextBlock Grid.Column="0" Grid.Row="3" Margin="5" HorizontalAlignment="Left" Text="チェックボックス入力"/>
+            <TextBlock Grid.Column="0" Grid.Row="4" Margin="5" HorizontalAlignment="Left">
                 コンボボックス入力<LineBreak />
                 （チェックボックスがTrue時にのみ「ネコ」有効）
             </TextBlock>
 
             <TextBox Grid.Column="1" Grid.Row="0" Margin="5" Width="200" HorizontalAlignment="Left" Text="{Binding Text.Value}"
                      Foreground="{Binding IsTextChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
-            <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"/>
-            <Rectangle Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Fill="Red" Width="3" Margin="0,5"
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Height="20" Width="100" HorizontalAlignment="Left" Text="{Binding Text2.Value}"/>
+            <Rectangle Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Fill="Red" Height="20" Width="3" Margin="0,5"
+                       Visibility="{Binding IsText2Changed.Value, Converter={StaticResource boolToVisibility}}"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"/>
+            <Rectangle Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Fill="Red" Width="3" Margin="0,5"
                        Visibility="{Binding IsNumberChanged.Value, Converter={StaticResource boolToVisibility}}"/>
-            <CheckBox Grid.Column="1" Grid.Row="2" Margin="5" Content="Sample Text" HorizontalAlignment="Left"
+            <CheckBox Grid.Column="1" Grid.Row="3" Margin="5" Content="Sample Text" HorizontalAlignment="Left"
                       IsChecked="{Binding Bool.Value}"
                       Foreground="{Binding IsBoolChanged.Value, Converter={StaticResource boolToColorConverter}}"
                       BorderBrush="{Binding IsBoolChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
-            <ComboBox Grid.Column="1" Grid.Row="3" Margin="5" ItemsSource="{Binding ComboBoxItems.Value}"
+            <ComboBox Grid.Column="1" Grid.Row="4" Margin="5" ItemsSource="{Binding ComboBoxItems.Value}"
                       DisplayMemberPath="Display" SelectedValuePath="Value" SelectedValue="{Binding SomeEnum.Value}"
                       Foreground="{Binding IsSomeEnumChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
         </Grid>

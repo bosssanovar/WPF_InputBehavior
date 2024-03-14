@@ -17,6 +17,9 @@ namespace ClassLibraryTests
         }
 
         [Theory]
+        [InlineData("１２３４５６７８９０")]//全角数字
+        [InlineData("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ")]//全角英小文字
+        [InlineData("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ")]//全角英大文字
         [InlineData("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン")]//全角カタカナ
         [InlineData("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ")]//半角カタカナ
         [InlineData("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん")]//ひらがな
@@ -60,6 +63,9 @@ namespace ClassLibraryTests
 
         [Theory]
         [InlineData("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]//半角英数
+        [InlineData("１２３４５６７８９０")]//全角数字
+        [InlineData("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ")]//全角英小文字
+        [InlineData("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ")]//全角英大文字
         [InlineData("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン")]//全角カタカナ
         [InlineData("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ")]//半角カタカナ
         [InlineData("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん")]//ひらがな
@@ -111,7 +117,6 @@ namespace ClassLibraryTests
         #region 文字列の切り出し
 
         #region Shift-JIS
-
         [Theory]
         [InlineData("", 0,  "")]
         [InlineData("a", 0, "")]

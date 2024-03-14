@@ -1,9 +1,11 @@
-﻿
+﻿using ClassLibrary;
+
 namespace Entity.XX
 {
     public record Text2VO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
     {
         private const int MaxLength = 10;
+        private const AvailableCharactersType Type = AvailableCharactersType.UpToJisLevel1KanjiSet;
 
         public List<(string Name, string Value)> SettingInfos
         {
@@ -18,17 +20,40 @@ namespace Entity.XX
 
         public static string CurrectValue(string value)
         {
-            // TODO k.i : 変更
+            string ret = value;
+
             if (!IsValid(value))
             {
-                return value.Substring(0, MaxLength);
+                if (!value.IsOnlyAbailableCharacters(Type))
+                {
+                    ret = ret.ExtractOnlyAbailableCharacters(Type);
+                }
+
+                if (!IsLengthWithinWpecified(ret))
+                {
+                    ret = ret.Substring(0, MaxLength);
+                }
             }
-            return value;
+            return ret;
         }
 
         public static bool IsValid(string value)
         {
-            // TODO k.i : 変更
+            if (!IsLengthWithinWpecified(value))
+            {
+                return false;
+            }
+
+            if (!value.IsOnlyAbailableCharacters(Type))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsLengthWithinWpecified(string value)
+        {
             return value.Length <= MaxLength;
         }
 

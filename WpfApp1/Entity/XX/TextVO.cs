@@ -7,7 +7,7 @@ namespace Entity.XX
     public record TextVO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
     {
         private const int MaxLength = 10;
-        private const AvailableCharactersType type = AvailableCharactersType.HalfWidthAlphanumeric;
+        private const AvailableCharactersType Type = AvailableCharactersType.HalfWidthAlphanumeric;
 
         public List<(string Name, string Value)> SettingInfos
         {
@@ -26,9 +26,9 @@ namespace Entity.XX
 
             if (!IsValid(value))
             {
-                if (!value.IsOnlyAbailableCharacters(type))
+                if (!value.IsOnlyAbailableCharacters(Type))
                 {
-                    ret = ret.ExtractOnlyAbailableCharacters(type);
+                    ret = ret.ExtractOnlyAbailableCharacters(Type);
                 }
 
                 if (!IsLengthWithinWpecified(ret))
@@ -46,7 +46,7 @@ namespace Entity.XX
                 return false;
             }
 
-            if (!value.IsOnlyAbailableCharacters(type))
+            if (!value.IsOnlyAbailableCharacters(Type))
             {
                 return false;
             }

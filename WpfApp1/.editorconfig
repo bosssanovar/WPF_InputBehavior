@@ -113,7 +113,7 @@ csharp_prefer_braces = true:silent
 csharp_style_namespace_declarations = block_scoped:silent
 csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_prefer_top_level_statements = true:silent
-csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_switch_expression = false:suggestion
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
@@ -168,6 +168,7 @@ dotnet_diagnostic.SA1202.severity = silent
 dotnet_diagnostic.SA1208.severity = silent
 dotnet_diagnostic.SA1204.severity = silent
 csharp_style_prefer_primary_constructors = true:suggestion
+dotnet_diagnostic.SYSLIB1045.severity = none
 
 [*.vb]
 #### 命名スタイル ####

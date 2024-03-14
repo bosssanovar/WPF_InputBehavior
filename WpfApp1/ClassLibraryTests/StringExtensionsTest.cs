@@ -11,7 +11,7 @@ namespace ClassLibraryTests
 
             foreach (var c in testCase)
             {
-                Assert.True(c.ToString().IsOnlyHalfWidthAlphanumericCharacters());
+                Assert.True(c.ToString().IsOnlyAbailableCharacters(AvailableCharactersType.HalfWidthAlphanumeric));
             }
         }
 
@@ -22,19 +22,20 @@ namespace ClassLibraryTests
 
             foreach (var c in testCase)
             {
-                Assert.False(c.ToString().IsOnlyHalfWidthAlphanumericCharacters());
+                Assert.False(c.ToString().IsOnlyAbailableCharacters(AvailableCharactersType.HalfWidthAlphanumeric));
             }
         }
 
         [Theory]
-        [InlineData("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]//変化なし
+        [InlineData("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]// 違反文字無し　変化なし
         [InlineData("_ +Ａあアｱ亜Ąａ１", "")]
-        [InlineData("abcあdefg1ｱ亜Ą23", "abcdefg123")]
-        [InlineData("_ +abcあdefg1ｱ亜Ą23", "abcdefg123")]
-        [InlineData("abcあdefg1ｱ亜Ą23ａ１", "abcdefg123")]
+        [InlineData("abcあdefg1ｱ亜Ą23", "abcdefg123")]// 中盤に違反文字
+        [InlineData("_ +abcあdefg1ｱ亜Ą23", "abcdefg123")]// 冒頭にも違反文字
+        [InlineData("abcあdefg1ｱ亜Ą23ａ１", "abcdefg123")]// 末尾にも違反文字
         public void 半角英数を抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyHalfWidthAlphanumericCharacters());
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.HalfWidthAlphanumeric));
         }
     }
 }

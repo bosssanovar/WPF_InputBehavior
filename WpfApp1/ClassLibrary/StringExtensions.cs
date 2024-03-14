@@ -10,40 +10,69 @@ using static System.Net.Mime.MediaTypeNames;
 namespace ClassLibrary
 {
     /// <summary>
+    /// 利用可能な文字種別
+    /// </summary>
+    public enum AvailableCharactersType
+    {
+        /// <summary>
+        /// 半角英数字
+        /// </summary>
+        HalfWidthAlphanumeric,
+    }
+
+    /// <summary>
     /// string型の拡張メソッド群
     /// </summary>
     public static class StringExtensions
     {
-        #region 半角英数字のみを判定
+        #region 利用可能な文字のみかを判定
 
         /// <summary>
-        /// 半角英数字のみかを判定します。
+        /// 利用可能な文字のみかを判定します。
         /// </summary>
         /// <param name="str">評価対象文字列</param>
-        /// <returns>半角英数字のみの場合 true</returns>
-        public static bool IsOnlyHalfWidthAlphanumericCharacters(this string str)
+        /// <param name="type">利用可能な文字種別</param>
+        /// <returns>利用可能な文字のみの場合 true</returns>
+        public static bool IsOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
-            if (str == null)
+            bool ret = false;
+
+            switch (type)
             {
-                return false;
+                case AvailableCharactersType.HalfWidthAlphanumeric:
+                    ret = Regex.IsMatch(str, @"^[0-9a-zA-Z]+$");
+                    break;
+                default:
+                    break;
             }
 
-            return Regex.IsMatch(str, @"^[0-9a-zA-Z]+$");
+            return ret;
         }
 
         #endregion
 
-        #region 半角英数字のみに補正
+        #region 利用可能な文字のみに補正
 
         /// <summary>
-        /// 半角英数字のみを抽出します。
+        /// 利用可能な文字のみを抽出します。
         /// </summary>
         /// <param name="str">対象文字列</param>
-        /// <returns>半角英数字のみの文字列</returns>
-        public static string ExtractOnlyHalfWidthAlphanumericCharacters(this string str)
+        /// <param name="type">利用可能な文字種別</param>
+        /// <returns>利用可能な文字のみの文字列</returns>
+        public static string ExtractOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
-            Regex re = new Regex(@"[^0-9a-zA-Z]");
-            return re.Replace(str, string.Empty);
+            string ret = string.Empty;
+
+            switch (type)
+            {
+                case AvailableCharactersType.HalfWidthAlphanumeric:
+                    ret = Regex.Replace(str, @"[^0-9a-zA-Z]", string.Empty);
+                    break;
+                default:
+                    break;
+            }
+
+            return ret;
         }
 
         #endregion

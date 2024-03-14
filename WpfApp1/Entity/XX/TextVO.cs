@@ -1,4 +1,7 @@
-﻿
+﻿using ClassLibrary;
+
+using System.Reflection.Metadata.Ecma335;
+
 namespace Entity.XX
 {
     public record TextVO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
@@ -18,14 +21,39 @@ namespace Entity.XX
 
         public static string CurrectValue(string value)
         {
+            string ret = value;
+
             if (!IsValid(value))
             {
-                return value.Substring(0, MaxLength);
+                if (!value.IsOnlyHalfWidthAlphanumericCharacters())
+                {
+                    ret = ret.ExtractOnlyHalfWidthAlphanumericCharacters();
+                }
+
+                if (!IsLengthWithinWpecified(ret))
+                {
+                    ret = ret.Substring(0, MaxLength);
+                }
             }
-            return value;
+            return ret;
         }
 
         public static bool IsValid(string value)
+        {
+            if (!IsLengthWithinWpecified(value))
+            {
+                return false;
+            }
+
+            if (!value.IsOnlyHalfWidthAlphanumericCharacters())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsLengthWithinWpecified(string value)
         {
             return value.Length <= MaxLength;
         }

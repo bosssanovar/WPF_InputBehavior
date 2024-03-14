@@ -64,7 +64,7 @@
                       IsChecked="{Binding Bool.Value}"
                       Foreground="{Binding IsBoolChanged.Value, Converter={StaticResource boolToColorConverter}}"
                       BorderBrush="{Binding IsBoolChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
-            <ComboBox Grid.Column="1" Grid.Row="4" Margin="5" ItemsSource="{Binding ComboBoxItems.Value}"
+            <ComboBox Grid.Column="1" Grid.Row="4" Margin="5" Height="20" ItemsSource="{Binding ComboBoxItems.Value}"
                       DisplayMemberPath="Display" SelectedValuePath="Value" SelectedValue="{Binding SomeEnum.Value}"
                       Foreground="{Binding IsSomeEnumChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
         </Grid>

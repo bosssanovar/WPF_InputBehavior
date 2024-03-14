@@ -31,7 +31,7 @@ namespace Entity.XX
 
                 if (!IsLengthWithinWpecified(ret))
                 {
-                    ret = ret.SubstringByteCount(MaxByteCount);
+                    ret = ret.SubstringSJisByteCount(MaxByteCount);
                 }
             }
             return ret;

@@ -318,27 +318,9 @@ namespace ClassLibrary
         /// <returns>利用可能な文字のみの文字列</returns>
         public static string ExtractOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
-            string ret;
-
-            switch (type)
-            {
-                case AvailableCharactersType.HalfWidthAlphanumeric:
-                    ret =
-                        string.Concat(
+            return string.Concat(
                             str.Where(
-                                x => x.IsOnlyAbailableCharacters(AvailableCharactersType.HalfWidthAlphanumeric)));
-                    break;
-                case AvailableCharactersType.UpToJisLevel1KanjiSet:
-                    ret =
-                        string.Concat(
-                            str.Where(
-                                x => x.IsOnlyAbailableCharacters(AvailableCharactersType.UpToJisLevel1KanjiSet)));
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            return ret;
+                                x => x.IsOnlyAbailableCharacters(type)));
         }
 
         #endregion
@@ -368,7 +350,7 @@ namespace ClassLibrary
         /// <param name="source">文字列ソース</param>
         /// <param name="byteCount">バイト数</param>
         /// <returns>Shift-JISエンコード時の指定バイト数で切り出されたの文字列</returns>
-        public static string SubstringByteCount(this string source, int byteCount)
+        public static string SubstringSJisByteCount(this string source, int byteCount)
         {
             //指定したバイト数が文字バイト数以上であれば文字列をそのまま返す
             if (source.GetShiftJisByteCount() <= byteCount)

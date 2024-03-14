@@ -133,7 +133,7 @@ namespace ClassLibraryTests
         [InlineData("aaa", 3, "aaa")]
         public void バイト数指定での文字列切り出し(string input, int maxByte, string expected)
         {
-            Assert.Equal(expected, input.SubstringByteCount(maxByte));
+            Assert.Equal(expected, input.SubstringSJisByteCount(maxByte));
         }
 
         #endregion

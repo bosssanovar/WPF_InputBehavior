@@ -4,7 +4,7 @@ namespace Entity.XX
 {
     public record Text2VO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
     {
-        private const int MaxLength = 10;
+        private const int MaxByteCount = 8;
         private const AvailableCharactersType Type = AvailableCharactersType.UpToJisLevel1KanjiSet;
 
         public List<(string Name, string Value)> SettingInfos
@@ -31,7 +31,7 @@ namespace Entity.XX
 
                 if (!IsLengthWithinWpecified(ret))
                 {
-                    ret = ret.Substring(0, MaxLength);
+                    ret = ret.SubstringByteCount(MaxByteCount);
                 }
             }
             return ret;
@@ -54,7 +54,7 @@ namespace Entity.XX
 
         private static bool IsLengthWithinWpecified(string value)
         {
-            return value.Length <= MaxLength;
+            return value.GetShiftJisByteCount() <= MaxByteCount;
         }
 
         protected override void Validate()

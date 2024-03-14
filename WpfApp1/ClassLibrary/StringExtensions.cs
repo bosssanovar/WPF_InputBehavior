@@ -89,6 +89,8 @@ namespace ClassLibrary
             return new Regex("^[\uFF61-\uFF9F]+$").IsMatch(target);
         }
 
+        #region 第1水準漢字用処理
+
         /// <summary>
         /// 文字列がJIS X 0208 漢字第二水準までで構成されているかを判定します
         /// </summary>
@@ -304,6 +306,8 @@ namespace ClassLibrary
 
         #endregion
 
+        #endregion
+
         #region 利用可能な文字のみに補正
 
         /// <summary>
@@ -335,6 +339,67 @@ namespace ClassLibrary
             }
 
             return ret;
+        }
+
+        #endregion
+
+        #region 文字列のバイト数を取得する(Shift-JIS)
+
+        /// <summary>
+        /// ShiftJisエンコード時のバイト数を取得します。
+        /// </summary>
+        /// <param name="str">対象文字列</param>
+        /// <returns>ShiftJisエンコード時のバイト数</returns>
+        public static int GetShiftJisByteCount(this string str)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
+
+            return sjisEnc.GetByteCount(str);
+        }
+
+        #endregion
+
+        #region 文字列を指定バイト数でトリミングする(Shift-JIS)
+
+        /// <summary>
+        /// Shift-JISエンコード時の指定バイト数の文字列を切り出します。
+        /// </summary>
+        /// <param name="source">文字列ソース</param>
+        /// <param name="byteCount">バイト数</param>
+        /// <returns>Shift-JISエンコード時の指定バイト数で切り出されたの文字列</returns>
+        public static string SubstringByteCount(this string source, int byteCount)
+        {
+            //指定したバイト数が文字バイト数以上であれば文字列をそのまま返す
+            if (source.GetShiftJisByteCount() <= byteCount)
+            {
+                return source;
+            }
+
+            //Shift-JISのエンコーディングを取得する
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Encoding enc = Encoding.GetEncoding("Shift_JIS");
+
+            //文字列のバイト配列を取得する
+            byte[] b = enc.GetBytes(source);
+
+            //①指定されたバイト数で文字を切り出す
+            string result = enc.GetString(b, 0, byteCount);
+
+            //②指定されたバイト数+1バイトで文字を切り出す
+            string result2 = enc.GetString(b, 0, byteCount + 1);
+
+            //①と②の文字数を比較する
+            if (result.Length == result2.Length)
+            {
+                //同じなら①から最後の１文字を削除した文字列を返す
+                return result.Remove(result.Length - 1);
+            }
+            else
+            {
+                //異なれば①をそのまま返す
+                return result;
+            }
         }
 
         #endregion

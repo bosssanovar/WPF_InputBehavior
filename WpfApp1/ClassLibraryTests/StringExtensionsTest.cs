@@ -107,5 +107,37 @@ namespace ClassLibraryTests
         }
 
         #endregion
+
+        #region 文字列の切り出し
+
+        #region Shift-JIS
+
+        [Theory]
+        [InlineData("", 0,  "")]
+        [InlineData("a", 0, "")]
+        [InlineData("あ", 0, "")]
+        [InlineData("", 1, "")]
+        [InlineData("a", 1, "a")]
+        [InlineData("あ", 1, "")]
+        [InlineData("", 2, "")]
+        [InlineData("a", 2, "a")]
+        [InlineData("あ", 2, "あ")]
+        [InlineData("aa", 2, "aa")]
+        [InlineData("aあ", 2, "a")]
+        [InlineData("あa", 2, "あ")]
+        [InlineData("ああ", 2, "あ")]
+        [InlineData("aaa", 2, "aa")]
+        [InlineData("aあ", 3, "aあ")]
+        [InlineData("あa", 3, "あa")]
+        [InlineData("ああ", 3, "あ")]
+        [InlineData("aaa", 3, "aaa")]
+        public void バイト数指定での文字列切り出し(string input, int maxByte, string expected)
+        {
+            Assert.Equal(expected, input.SubstringByteCount(maxByte));
+        }
+
+        #endregion
+
+        #endregion
     }
 }

@@ -114,11 +114,317 @@ namespace ClassLibraryTests
 
         #endregion
 
-        #region 文字列の切り出し
+        #region 数字(0～9)
+
+        [Theory]
+        [InlineData("1234567890")]//半角数字
+        public void 数字かを判定＿ＯＫ(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.True(c.IsOnlyAbailableCharacters(AvailableCharactersType.Number));
+            }
+        }
+
+        [Theory]
+        [InlineData("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]//半角英字
+        [InlineData("１２３４５６７８９０")]//全角数字
+        [InlineData("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ")]//全角英小文字
+        [InlineData("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ")]//全角英大文字
+        [InlineData("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン")]//全角カタカナ
+        [InlineData("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ")]//半角カタカナ
+        [InlineData("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん")]//ひらがな
+        [InlineData("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ")]//半角記号
+        [InlineData("！“#＄％＆‘（）＊＋,－./：；＜＝＞？＠［￥］＾＿‘｛｜｝～　")]//全角記号
+        [InlineData("亜唖娃阿哀愛挨姶逢葵茜")]//第1水準漢字　面区冒頭
+        [InlineData("拭植殖燭織職色触食蝕辱")]//第1水準漢字　面区中盤
+        [InlineData("鷲亙亘鰐詫藁蕨椀湾碗腕")]//第1水準漢字　面区末尾
+        [InlineData("弌丐丕个丱丶丼丿乂乖乘")]//第2水準漢字　面区冒頭
+        [InlineData("狹狷倏猗猊猜猖猝猴猯猩")]//第2水準漢字　面区中盤
+        [InlineData("堯槇遙瑤凜熙齷齲齶龕龜龠")]//第2水準漢字　面区末尾
+        [InlineData("俱𠀋㐂丨丯丰亍仡份仿伃")]//第3水準漢字　面区冒頭
+        [InlineData("琇琊琚琛琢琦琨琪琫琬琮")]//第3水準漢字　面区中盤
+        [InlineData("鼹齗龐龔龗龢姸屛幷瘦繫")]//第3水準漢字　面区末尾
+        [InlineData("𠂉丂丏丒丩丫丮乀乇么𠂢")]//第4水準漢字　面区冒頭
+        [InlineData("𥆩䀹𥇥𥇍睘睠睪𥈞睲睼睽")]//第4水準漢字　面区中盤
+        [InlineData("齕齘𪗱齝𪘂齩𪘚齭齰齵𪚲")]//第4水準漢字　面区末尾
+        public void 数字かを判定＿NG(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.False(c.IsOnlyAbailableCharacters(AvailableCharactersType.Number));
+            }
+        }
+
+        [Theory]
+        [InlineData("1234567890", "1234567890")]// 違反文字無し　変化なし
+        [InlineData("abcde１２３４ａｂｃｄｅｆＡＢＣＤアイウエオカｱｲｳｴｵｶｷｸｹｺｻｼｽｾあいうえおか!\"#$%&'()*+,-！“#＄％亜唖娃齕齘𪗱齝", "")]//違反文字のみ
+        [InlineData("123456丕丗7890", "1234567890")]// 中盤に違反文字
+        [InlineData("亂亅123456丕丗7890", "1234567890")]// 冒頭にも違反文字
+        [InlineData("123456丕丗7890亂亅", "1234567890")]// 末尾にも違反文字
+        public void 数字を抽出(string input, string output)
+        {
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.Number));
+        }
+
+        #endregion
+
+        #region 数値とマイナス(0～9, -)
+
+        [Theory]
+        [InlineData("1234567890")]//半角数字
+        [InlineData("-")]//マイナス
+        public void 数値とマイナスかを判定＿ＯＫ(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.True(c.IsOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+            }
+        }
+
+        [Theory]
+        [InlineData("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]//半角英字
+        [InlineData("１２３４５６７８９０")]//全角数字
+        [InlineData("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ")]//全角英小文字
+        [InlineData("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ")]//全角英大文字
+        [InlineData("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン")]//全角カタカナ
+        [InlineData("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ")]//半角カタカナ
+        [InlineData("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん")]//ひらがな
+        [InlineData("!\"#$%&'()*+,./:;<=>?@[\\]^_`{|}~ ")]//半角記号
+        [InlineData("！“#＄％＆‘（）＊＋,－./：；＜＝＞？＠［￥］＾＿‘｛｜｝～　")]//全角記号
+        [InlineData("亜唖娃阿哀愛挨姶逢葵茜")]//第1水準漢字　面区冒頭
+        [InlineData("拭植殖燭織職色触食蝕辱")]//第1水準漢字　面区中盤
+        [InlineData("鷲亙亘鰐詫藁蕨椀湾碗腕")]//第1水準漢字　面区末尾
+        [InlineData("弌丐丕个丱丶丼丿乂乖乘")]//第2水準漢字　面区冒頭
+        [InlineData("狹狷倏猗猊猜猖猝猴猯猩")]//第2水準漢字　面区中盤
+        [InlineData("堯槇遙瑤凜熙齷齲齶龕龜龠")]//第2水準漢字　面区末尾
+        [InlineData("俱𠀋㐂丨丯丰亍仡份仿伃")]//第3水準漢字　面区冒頭
+        [InlineData("琇琊琚琛琢琦琨琪琫琬琮")]//第3水準漢字　面区中盤
+        [InlineData("鼹齗龐龔龗龢姸屛幷瘦繫")]//第3水準漢字　面区末尾
+        [InlineData("𠂉丂丏丒丩丫丮乀乇么𠂢")]//第4水準漢字　面区冒頭
+        [InlineData("𥆩䀹𥇥𥇍睘睠睪𥈞睲睼睽")]//第4水準漢字　面区中盤
+        [InlineData("齕齘𪗱齝𪘂齩𪘚齭齰齵𪚲")]//第4水準漢字　面区末尾
+        public void 数値とマイナスかを判定＿NG(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.False(c.IsOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+            }
+        }
+
+        [Theory]
+        [InlineData("1")]
+        [InlineData("-1")]
+        [InlineData("9")]
+        [InlineData("-9")]
+        [InlineData("99")]
+        [InlineData("-99")]
+        [InlineData("0")]
+        [InlineData("-0")]
+        [InlineData("09")]
+        [InlineData("-09")]
+        [InlineData("009")]
+        [InlineData("-009")]
+        public void 数値とマイナスで数値として正しいかを判定＿ＯＫ(string str)
+        {
+            Assert.True(str.IsOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+        }
+
+        [Theory]
+        [InlineData("--1")]
+        [InlineData("--9")]
+        [InlineData("--0")]
+        [InlineData("1-")]
+        [InlineData("9-")]
+        [InlineData("0-")]
+        [InlineData("1--")]
+        [InlineData("9--")]
+        [InlineData("0--")]
+        [InlineData("11-")]
+        [InlineData("99-")]
+        [InlineData("00-")]
+        public void 数値とマイナスで数値として正しいかを判定＿NG(string str)
+        {
+            Assert.False(str.IsOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+        }
+
+        [Theory]
+        [InlineData("", "")]
+        [InlineData("-1234567890", "-1234567890")]// 違反文字無し　変化なし
+        [InlineData("abcde１２３４ａｂｃｄｅｆＡＢＣＤアイウエオカｱｲｳｴｵｶｷｸｹｺｻｼｽｾあいうえおか!\"#$%&'()*+,！“#＄％亜唖娃齕齘𪗱齝", "")]//違反文字のみ
+        [InlineData("-123456丕丗7890", "-1234567890")]// 中盤に違反文字
+        [InlineData("亂亅-123456丕丗7890", "-1234567890")]// 冒頭にも違反文字
+        [InlineData("-123456丕丗7890亂亅", "-1234567890")]// 末尾にも違反文字
+        [InlineData("1-234567890", "1")]// 書式不正 左有効部抜き出し
+        [InlineData("12-34567890", "12")]// 書式不正 左有効部抜き出し
+        [InlineData("1234567890-", "1234567890")]// 書式不正 左有効部抜き出し
+        [InlineData("1--234567890", "1")]// 書式不正 左有効部抜き出し
+        [InlineData("12--34567890", "12")]// 書式不正 左有効部抜き出し
+        [InlineData("1234567890--", "1234567890")]// 書式不正 左有効部抜き出し
+        [InlineData("-", "-")]
+        [InlineData("--", "-")]
+        [InlineData("--1234567890", "-")]// 書式不正 左有効部抜き出し
+        [InlineData("-1-234567890", "-1")]// 書式不正 左有効部抜き出し
+        [InlineData("-123456789-0", "-123456789")]// 書式不正 左有効部抜き出し
+        [InlineData("-1234567890-", "-1234567890")]// 書式不正 左有効部抜き出し
+        [InlineData("-1--234567890", "-1")]// 書式不正 左有効部抜き出し
+        public void 数値とマイナスを抽出(string input, string output)
+        {
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+        }
+
+        #endregion
+
+        #region 小数(0～9, 小数点)
+
+        [Theory]
+        [InlineData("1234567890")]//半角数字
+        [InlineData(".")]//記号
+        public void 小数かを判定＿ＯＫ(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.True(c.IsOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+            }
+        }
+
+        [Theory]
+        [InlineData("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")]//半角英字
+        [InlineData("１２３４５６７８９０")]//全角数字
+        [InlineData("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ")]//全角英小文字
+        [InlineData("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ")]//全角英大文字
+        [InlineData("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン")]//全角カタカナ
+        [InlineData("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ")]//半角カタカナ
+        [InlineData("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん")]//ひらがな
+        [InlineData("!\"#$%&'()*+,/:-;<=>?@[\\]^_`{|}~ ")]//半角記号
+        [InlineData("！“#＄％＆‘（）＊＋,－．/：；＜＝＞？＠［￥］＾＿‘｛｜｝～　")]//全角記号
+        [InlineData("亜唖娃阿哀愛挨姶逢葵茜")]//第1水準漢字　面区冒頭
+        [InlineData("拭植殖燭織職色触食蝕辱")]//第1水準漢字　面区中盤
+        [InlineData("鷲亙亘鰐詫藁蕨椀湾碗腕")]//第1水準漢字　面区末尾
+        [InlineData("弌丐丕个丱丶丼丿乂乖乘")]//第2水準漢字　面区冒頭
+        [InlineData("狹狷倏猗猊猜猖猝猴猯猩")]//第2水準漢字　面区中盤
+        [InlineData("堯槇遙瑤凜熙齷齲齶龕龜龠")]//第2水準漢字　面区末尾
+        [InlineData("俱𠀋㐂丨丯丰亍仡份仿伃")]//第3水準漢字　面区冒頭
+        [InlineData("琇琊琚琛琢琦琨琪琫琬琮")]//第3水準漢字　面区中盤
+        [InlineData("鼹齗龐龔龗龢姸屛幷瘦繫")]//第3水準漢字　面区末尾
+        [InlineData("𠂉丂丏丒丩丫丮乀乇么𠂢")]//第4水準漢字　面区冒頭
+        [InlineData("𥆩䀹𥇥𥇍睘睠睪𥈞睲睼睽")]//第4水準漢字　面区中盤
+        [InlineData("齕齘𪗱齝𪘂齩𪘚齭齰齵𪚲")]//第4水準漢字　面区末尾
+        public void 小数かを判定＿NG(string str)
+        {
+            foreach (var c in str)
+            {
+                Assert.False(c.IsOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+            }
+        }
+
+        [Theory]
+        [InlineData(".")]
+        [InlineData(".0")]
+        [InlineData(".00")]
+        [InlineData(".1")]
+        [InlineData(".11")]
+        [InlineData(".9")]
+        [InlineData(".99")]
+        [InlineData("1")]
+        [InlineData("1.")]
+        [InlineData("1.0")]
+        [InlineData("1.00")]
+        [InlineData("1.1")]
+        [InlineData("1.11")]
+        [InlineData("1.9")]
+        [InlineData("1.99")]
+        [InlineData("9")]
+        [InlineData("9.")]
+        [InlineData("9.0")]
+        [InlineData("9.00")]
+        [InlineData("9.1")]
+        [InlineData("9.11")]
+        [InlineData("9.9")]
+        [InlineData("9.99")]
+        [InlineData("99")]
+        [InlineData("99.")]
+        [InlineData("99.0")]
+        [InlineData("99.00")]
+        [InlineData("99.1")]
+        [InlineData("99.11")]
+        [InlineData("99.9")]
+        [InlineData("99.99")]
+        [InlineData("0")]
+        [InlineData("0.")]
+        [InlineData("0.0")]
+        [InlineData("0.00")]
+        [InlineData("0.1")]
+        [InlineData("0.11")]
+        [InlineData("0.9")]
+        [InlineData("0.99")]
+        [InlineData("09")]
+        [InlineData("09.")]
+        [InlineData("009")]
+        [InlineData("009.")]
+        [InlineData("099.0")]
+        [InlineData("099.00")]
+        [InlineData("099.1")]
+        [InlineData("099.11")]
+        [InlineData("099.9")]
+        [InlineData("099.99")]
+        public void 小数で数値として正しいかを判定＿ＯＫ(string str)
+        {
+            Assert.True(str.IsOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+        }
+
+        [Theory]
+        [InlineData("..")]
+        [InlineData("0..")]
+        [InlineData("1..")]
+        [InlineData("9..")]
+        [InlineData(".0.")]
+        [InlineData(".1.")]
+        [InlineData(".9.")]
+        [InlineData("0.0.")]
+        [InlineData("1.1.")]
+        [InlineData("9.9.")]
+        public void 小数で数値として正しいかを判定＿NG(string str)
+        {
+            Assert.False(str.IsOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+        }
+
+        [Theory]
+        [InlineData("", "")]
+        [InlineData("1234567890", "1234567890")]// 違反文字無し　変化なし
+        [InlineData(".1234567890", ".1234567890")]// 違反文字無し　変化なし
+        [InlineData("1.234567890", "1.234567890")]// 違反文字無し　変化なし
+        [InlineData("123456789.0", "123456789.0")]// 違反文字無し　変化なし
+        [InlineData("abcde１２３４ａｂｃｄｅｆＡＢＣＤアイウエオカｱｲｳｴｵｶｷｸｹｺｻｼｽｾあいうえおか!\"#$%&'()*-+,！“#＄％亜唖娃齕齘𪗱齝", "")]//違反文字のみ
+        [InlineData("1.23456丕丗7890", "1.234567890")]// 中盤に違反文字
+        [InlineData("亂亅1.23456丕丗7890", "1.234567890")]// 冒頭にも違反文字
+        [InlineData("1.23456丕丗7890亂亅", "1.234567890")]// 末尾にも違反文字
+        [InlineData("1..234567890", "1.")]// 書式不正 左有効部抜き出し
+        [InlineData(".1.234567890", ".1")]// 書式不正 左有効部抜き出し
+        [InlineData("12..34567890", "12.")]// 書式不正 左有効部抜き出し
+        [InlineData("1.2.34567890", "1.2")]// 書式不正 左有効部抜き出し
+        [InlineData("1234567890..", "1234567890.")]// 書式不正 左有効部抜き出し
+        [InlineData("123456789.0.", "123456789.0")]// 書式不正 左有効部抜き出し
+        [InlineData(".", ".")]
+        [InlineData(".丕丗", ".")]
+        [InlineData("丕丗.", ".")]
+        [InlineData("..", ".")]
+        [InlineData(".丕丗.", ".")]
+        [InlineData(".丕.丗", ".")]
+        [InlineData("丕.丗.", ".")]
+        [InlineData("丕丗..", ".")]
+        public void 小数を抽出(string input, string output)
+        {
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+        }
+
+        #endregion￥
+
+        #region 文字列の長さ制限
 
         #region Shift-JIS
         [Theory]
-        [InlineData("", 0,  "")]
+        [InlineData("", 0, "")]
         [InlineData("a", 0, "")]
         [InlineData("あ", 0, "")]
         [InlineData("", 1, "")]

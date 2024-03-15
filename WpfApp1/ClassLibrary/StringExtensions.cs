@@ -24,6 +24,26 @@ namespace ClassLibrary
         /// JIS第1水準漢字まで
         /// </summary>
         UpToJisLevel1KanjiSet,
+
+        /// <summary>
+        /// 数字(0～9))
+        /// </summary>
+        Number,
+
+        /// <summary>
+        /// 数値とマイナス(0～9, -)
+        /// </summary>
+        NumberAndMinus,
+
+        /// <summary>
+        /// 小数(0～9, 小数点)
+        /// </summary>
+        Decimal,
+
+        /// <summary>
+        /// 小数とマイナス(0～9, 小数点, -)
+        /// </summary>
+        DecimalAndMinus,
     }
 
     /// <summary>
@@ -52,6 +72,11 @@ namespace ClassLibrary
         /// <returns>利用可能な文字のみの場合 true</returns>
         public static bool IsOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
+            if (string.IsNullOrEmpty(str))
+            {
+                return true;
+            }
+
             bool ret;
 
             switch (type)
@@ -62,6 +87,17 @@ namespace ClassLibrary
                 case AvailableCharactersType.UpToJisLevel1KanjiSet:
                     ret = IsUntilJISKanjiLevel2(str, true);
                     break;
+                case AvailableCharactersType.Number:
+                    ret = Regex.IsMatch(str, @"^[0-9]+$");
+                    break;
+                case AvailableCharactersType.NumberAndMinus:
+                    ret = Regex.IsMatch(str, @"^[-]?[0-9]+$|^[-]$");
+                    break;
+                case AvailableCharactersType.Decimal:
+                    ret = Regex.IsMatch(str, @"^[0-9]+[.][0-9]+$|^[0-9]+[.]$|^[.][0-9]+$|^[0-9]+$|^[.]$");
+                    break;
+                case AvailableCharactersType.DecimalAndMinus:
+                    throw new NotImplementedException();
                 default:
                     throw new NotImplementedException();
             }
@@ -318,9 +354,79 @@ namespace ClassLibrary
         /// <returns>利用可能な文字のみの文字列</returns>
         public static string ExtractOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
-            return string.Concat(
-                            str.Where(
-                                x => x.IsOnlyAbailableCharacters(type)));
+            if (str.IsOnlyAbailableCharacters(type))
+            {
+                // 不正な文字列でなければ、そのまま完了
+                return str;
+            }
+
+            string ret;
+
+            // まず、不正文字の削除。それだけでOKとなれば、それで完了
+            ret = string.Concat(str.Where(x => x.IsOnlyAbailableCharacters(type)));
+            if (ret.IsOnlyAbailableCharacters(type))
+            {
+                // 不正な文字列でなければ、そのまま完了
+                return ret;
+            }
+
+            switch (type)
+            {
+                case AvailableCharactersType.HalfWidthAlphanumeric:
+                case AvailableCharactersType.UpToJisLevel1KanjiSet:
+                case AvailableCharactersType.Number:
+                    //不正文字削除だけで完了している。
+                    break;
+                case AvailableCharactersType.NumberAndMinus:
+                    ret = CorrectNumberAndMinus(ret);
+                    break;
+                case AvailableCharactersType.Decimal:
+                    ret = CorrectDecimal(ret);
+                    break;
+                case AvailableCharactersType.DecimalAndMinus:
+                    throw new NotImplementedException();
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return ret;
+        }
+
+        private static string CorrectNumberAndMinus(string str)
+        {
+            string ret = str;
+
+            var index = ret.IndexOf('-');
+            if (index >= 1)
+            {
+                // 先頭がマイナス文字でなく数字の中盤にマイナス文字がある場合、
+                // マイナス文字の前までを抽出
+                return ret.Substring(0, index);
+            }
+            else
+            {
+                // マイナス文字が先頭と、それ以外1つ以上ある場合
+                // 2つ目のマイナス文字前までを抽出して完了
+                var secondDotIndex =
+                    ret.Select((character, index) => (character, index))
+                    .Where(item => item.character == '-')
+                    .Skip(1)
+                    .First()
+                    .index;
+                return ret.Substring(0, secondDotIndex);
+            }
+        }
+
+        private static string CorrectDecimal(string str)
+        {
+            // 2つ目の小数点前までを抽出
+            var secondDotIndex =
+                str.Select((character, index) => (character, index))
+                .Where(item => item.character == '.')
+                .Skip(1)
+                .First()
+                .index;
+            return str.Substring(0, secondDotIndex);
         }
 
         #endregion

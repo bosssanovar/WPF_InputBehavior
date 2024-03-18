@@ -1,10 +1,13 @@
 ﻿
+using ClassLibrary;
+
 namespace Entity.XX
 {
     public record NumberVO(double Content) : ValueObjectBase<double>(Content), IInputLimit<double>, ISettingInfos
     {
         private const double MinValue = -100.0;
         private const double MaxValue = 95.5;
+        private const double Step = 0.5;
 
         public List<(string Name, string Value)> SettingInfos
         {
@@ -19,28 +22,14 @@ namespace Entity.XX
 
         public static double CurrectValue(double value)
         {
-            if (value < MinValue)
-            {
-                return MinValue;
-            }
-            else if (value > MaxValue)
-            {
-                return MaxValue;
-            }
-            return value;
+            var corrector = new DoubleNumberCorrector(MaxValue, MinValue, Step);
+            return corrector.Correct(value);
         }
 
         public static bool IsValid(double value)
         {
-            if (value < MinValue)
-            {
-                return false;
-            }
-            else if (value > MaxValue)
-            {
-                return false;
-            }
-            return true;
+            var corrector = new DoubleNumberCorrector(MaxValue, MinValue, Step);
+            return corrector.IsValid(value);
         }
 
         protected override void Validate()

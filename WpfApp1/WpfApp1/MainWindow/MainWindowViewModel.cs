@@ -57,7 +57,7 @@ namespace WpfApp1.MainWindow
         /// <summary>
         /// Number設定
         /// </summary>
-        public ReactivePropertySlim<int> Number { get; }
+        public ReactivePropertySlim<double> Number { get; }
 
         /// <summary>
         /// Number設定が変更されたか

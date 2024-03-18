@@ -1,10 +1,10 @@
 ﻿
 namespace Entity.XX
 {
-    public record NumberVO(int Content) : ValueObjectBase<int>(Content), IInputLimit<int>, ISettingInfos
+    public record NumberVO(double Content) : ValueObjectBase<double>(Content), IInputLimit<double>, ISettingInfos
     {
-        private const int MinValue = 0;
-        private const int MaxValue = 500;
+        private const double MinValue = -100.0;
+        private const double MaxValue = 95.5;
 
         public List<(string Name, string Value)> SettingInfos
         {
@@ -17,7 +17,7 @@ namespace Entity.XX
             }
         }
 
-        public static int CurrectValue(int value)
+        public static double CurrectValue(double value)
         {
             if (value < MinValue)
             {
@@ -30,7 +30,7 @@ namespace Entity.XX
             return value;
         }
 
-        public static bool IsValid(int value)
+        public static bool IsValid(double value)
         {
             if (value < MinValue)
             {

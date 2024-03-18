@@ -3,7 +3,7 @@
     public class XXEntity : EntityBase<XXEntity>
     {
         private const string Text_InitValue = "Aa123";
-        private const int Number_InitValue = 100;
+        private const double Number_InitValue = 10.5;
         private const bool Bool_InitValue = true;
         private const SomeEnum SomeEnum_InitValue = XX.SomeEnum.Pig;
         private const int SpeakerCount_InitValue = 40;

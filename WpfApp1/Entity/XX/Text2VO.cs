@@ -24,7 +24,7 @@ namespace Entity.XX
 
             if (!IsValid(value))
             {
-                if (!value.IsOnlyAbailableCharacters(Type))
+                if (!value.IsFormatValid(Type))
                 {
                     ret = ret.ExtractOnlyAbailableCharacters(Type);
                 }
@@ -44,7 +44,7 @@ namespace Entity.XX
                 return false;
             }
 
-            if (!value.IsOnlyAbailableCharacters(Type))
+            if (!value.IsFormatValid(Type))
             {
                 return false;
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace ClassLibrary
 {
     /// <summary>
-    /// 利用可能な文字種別
+    /// 形式種別
     /// </summary>
     public enum AvailableCharactersType
     {
@@ -54,23 +55,23 @@ namespace ClassLibrary
         #region 利用可能な文字のみかを判定
 
         /// <summary>
-        /// 利用可能な文字かを判定します。
+        /// 有効な形式となっているかを判定します。
         /// </summary>
         /// <param name="c">評価対象文字</param>
-        /// <param name="type">利用可能な文字種別</param>
+        /// <param name="type">形式種別</param>
         /// <returns>利用可能な文字の場合 true</returns>
-        public static bool IsOnlyAbailableCharacters(this char c, AvailableCharactersType type)
+        public static bool IsFormatValid(this char c, AvailableCharactersType type)
         {
-            return c.ToString().IsOnlyAbailableCharacters(type);
+            return c.ToString().IsFormatValid(type);
         }
 
         /// <summary>
-        /// 利用可能な文字のみかを判定します。
+        /// 有効な形式となっているかを判定します。
         /// </summary>
         /// <param name="str">評価対象文字列</param>
-        /// <param name="type">利用可能な文字種別</param>
+        /// <param name="type">形式種別</param>
         /// <returns>利用可能な文字のみの場合 true</returns>
-        public static bool IsOnlyAbailableCharacters(this string str, AvailableCharactersType type)
+        public static bool IsFormatValid(this string str, AvailableCharactersType type)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -91,13 +92,21 @@ namespace ClassLibrary
                     ret = Regex.IsMatch(str, @"^[0-9]+$");
                     break;
                 case AvailableCharactersType.NumberAndMinus:
+                    // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
                     ret = Regex.IsMatch(str, @"^[-]?[0-9]+$|^[-]$");
                     break;
                 case AvailableCharactersType.Decimal:
+                    // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
                     ret = Regex.IsMatch(str, @"^[0-9]+[.][0-9]+$|^[0-9]+[.]$|^[.][0-9]+$|^[0-9]+$|^[.]$");
                     break;
                 case AvailableCharactersType.DecimalAndMinus:
-                    throw new NotImplementedException();
+                    var sb = new StringBuilder();
+                    sb.Append("^[-]?[0-9]+[.][0-9]+$").Append('|'); // ex. "-0.0", "0.0"
+                    sb.Append("^[-]?[0-9]+[.]?$").Append('|'); // ex. "-0.", "-0", "0"
+                    sb.Append("^[.][0-9]*$").Append('|'); // ex. ".0", "."
+                    sb.Append("^[-]$");
+                    ret = Regex.IsMatch(str, sb.ToString());
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -354,7 +363,7 @@ namespace ClassLibrary
         /// <returns>利用可能な文字のみの文字列</returns>
         public static string ExtractOnlyAbailableCharacters(this string str, AvailableCharactersType type)
         {
-            if (str.IsOnlyAbailableCharacters(type))
+            if (str.IsFormatValid(type))
             {
                 // 不正な文字列でなければ、そのまま完了
                 return str;
@@ -363,8 +372,8 @@ namespace ClassLibrary
             string ret;
 
             // まず、不正文字の削除。それだけでOKとなれば、それで完了
-            ret = string.Concat(str.Where(x => x.IsOnlyAbailableCharacters(type)));
-            if (ret.IsOnlyAbailableCharacters(type))
+            ret = string.Concat(str.Where(x => x.IsFormatValid(type)));
+            if (ret.IsFormatValid(type))
             {
                 // 不正な文字列でなければ、そのまま完了
                 return ret;
@@ -384,7 +393,28 @@ namespace ClassLibrary
                     ret = CorrectDecimal(ret);
                     break;
                 case AvailableCharactersType.DecimalAndMinus:
-                    throw new NotImplementedException();
+                    bool hasMainus = ret.Contains('-');
+                    bool hasDecimalPoint = ret.Contains(".");
+
+                    if (hasMainus && !hasDecimalPoint)
+                    {
+                        // 「数値とマイナス」と同様のケースのため、当該処理をするだけで抽出完了。
+                        return CorrectNumberAndMinus(ret);
+                    }
+                    else if (!hasMainus && hasDecimalPoint)
+                    {
+                        // 「小数」と同様のケースのため、当該処理をするだけで抽出完了。
+                        return CorrectDecimal(ret);
+                    }
+                    else if (!hasMainus && !hasDecimalPoint)
+                    {
+                        // マイナスも小数点もない数値だけのケース。
+                        // その場合はここまで処理が来ないため、NoCare.
+                    }
+
+                    // マイナスと小数点が混在する場合
+                    ret = CorrectDecimalAndMinus(ret);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -427,6 +457,59 @@ namespace ClassLibrary
                 .First()
                 .index;
             return str.Substring(0, secondDotIndex);
+        }
+
+        private static string CorrectDecimalAndMinus(string str)
+        {
+            if (str.Substring(0, 2) == "-.")
+            {
+                return "-";
+            }
+
+            // 先頭以外にマイナスがある場合は、マイナス前までを抽出
+            if (Regex.IsMatch(str, $"^[0-9.]+[-]"))
+            {
+                var minusIndex = str.IndexOf("-");
+                return str.Substring(0, minusIndex);
+            }
+
+            // 先頭マイナスで、全体でマイナスもしくは小数点が2個以上ある場合
+            if (Regex.IsMatch(str, $"^[-][0-9.]*[-]")
+                || Regex.IsMatch(str, $"^[-][0-9]*[.][0-9]*[.]"))
+            {
+                return str.Substring(0, GetEndIndex(str));
+            }
+
+            return str;
+        }
+
+        private static int GetEndIndex(string str)
+        {
+            /* 2つ目のマイナス前、もしくは２つ目の小数点前の短い方までを抽出 */
+
+            int ret = 0;
+            int minusCount = 0;
+            int dotCount = 0;
+
+            for (int index = 0; index < str.Length; index++)
+            {
+                if (str[index] is '.')
+                {
+                    dotCount++;
+                }
+                else if (str[index] is '-')
+                {
+                    minusCount++;
+                }
+
+                if (minusCount > 1 || dotCount > 1)
+                {
+                    ret = index;
+                    break;
+                }
+            }
+
+            return ret;
         }
 
         #endregion

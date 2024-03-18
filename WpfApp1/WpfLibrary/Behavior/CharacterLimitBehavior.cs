@@ -68,6 +68,11 @@ namespace WpfLibrary.Behavior
             var textBox = sender as TextBox;
             if (textBox == null) return;
 
+            if (!string.IsNullOrEmpty(textBox.Text))
+            {
+                return;
+            }
+
             if (GetCharactersType(textBox) is AvailableCharactersType.Number
                 || GetCharactersType(textBox) is AvailableCharactersType.NumberAndMinus
                 || GetCharactersType(textBox) is AvailableCharactersType.Decimal

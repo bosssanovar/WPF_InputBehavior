@@ -54,12 +54,14 @@
             </TextBlock>
 
             <TextBox Grid.Column="1" Grid.Row="0" Margin="5" Width="200" HorizontalAlignment="Left" Text="{Binding Text.Value}"
-                     Foreground="{Binding IsTextChanged.Value, Converter={StaticResource boolToColorConverter}}"/>
-            <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Height="20" Width="100" HorizontalAlignment="Left" Text="{Binding Text2.Value}"/>
+                     Foreground="{Binding IsTextChanged.Value, Converter={StaticResource boolToColorConverter}}"
+                     behavior:CharacterLimitBehavior.CharactersType="HalfWidthAlphanumeric" MaxLength="10"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Height="20" Width="100" HorizontalAlignment="Left" Text="{Binding Text2.Value}"
+                     behavior:CharacterLimitBehavior.CharactersType="UpToJisLevel1KanjiSet" MaxLength="8"/>
             <Rectangle Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Fill="Red" Height="20" Width="3" Margin="0,5"
                        Visibility="{Binding IsText2Changed.Value, Converter={StaticResource boolToVisibility}}"/>
             <TextBox Grid.Column="1" Grid.Row="2" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"
-                     behavior:CharacterLimitBehavior.CharactersType="DecimalAndMinus"/>
+                     behavior:CharacterLimitBehavior.CharactersType="DecimalAndMinus" MaxLength="6"/>
             <Rectangle Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Fill="Red" Width="3" Margin="0,5"
                        Visibility="{Binding IsNumberChanged.Value, Converter={StaticResource boolToVisibility}}"/>
             <CheckBox Grid.Column="1" Grid.Row="3" Margin="5" Content="Sample Text" HorizontalAlignment="Left"

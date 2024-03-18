@@ -61,6 +61,10 @@ namespace WpfLibrary.Behavior
             {
                 InputMethod.SetIsInputMethodEnabled(textBox, false);
             }
+            else
+            {
+                InputMethod.SetIsInputMethodEnabled(textBox, true);
+            }
         }
 
         private static void TextBox_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -73,6 +77,7 @@ namespace WpfLibrary.Behavior
                 return;
             }
 
+            // ブランク時には０を挿入
             if (GetCharactersType(textBox) is AvailableCharactersType.Number
                 || GetCharactersType(textBox) is AvailableCharactersType.NumberAndMinus
                 || GetCharactersType(textBox) is AvailableCharactersType.Decimal
@@ -136,7 +141,7 @@ namespace WpfLibrary.Behavior
             textBox.SelectionStart = cursorPosition + correctedText.Length;
         }
 
-        private static string InsertTextAtCaretPosition(TextBox textBox, string correctedText)
+        private static string InsertTextAtCaretPosition(TextBox textBox, string str)
         {
             int pos = textBox.SelectionStart;
             string text = textBox.Text;
@@ -148,7 +153,8 @@ namespace WpfLibrary.Behavior
                 text = text.Remove(pos, len);
             }
 
-            text = text.Insert(pos, correctedText);
+            //キャレット位置に文字列を挿入
+            text = text.Insert(pos, str);
 
             return text;
         }

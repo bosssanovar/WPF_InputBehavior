@@ -97,20 +97,36 @@ namespace ClassLibrary
                     ret = Regex.IsMatch(str, @"^[0-9]+$");
                     break;
                 case TextFormatType.NumberAndMinus:
-                    // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
-                    ret = Regex.IsMatch(str, @"^[-]?[0-9]+$|^[-]$");
+                    {
+                        var sb = new StringBuilder();
+                        sb.Append("^[-]?[0-9]+$").Append('|'); // ex. "-0.0", "0.0"
+                        sb.Append("^[-]$"); // '-'
+                        ret = Regex.IsMatch(str, sb.ToString());
+                    }
+
                     break;
                 case TextFormatType.Decimal:
-                    // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
-                    ret = Regex.IsMatch(str, @"^[0-9]+[.][0-9]+$|^[0-9]+[.]$|^[.][0-9]+$|^[0-9]+$|^[.]$");
+                    {
+                        var sb = new StringBuilder();
+                        sb.Append("^[0-9]+[.][0-9]+$").Append('|'); // ex. "99.99"
+                        sb.Append("^[0-9]+[.]$").Append('|'); // ex. "99."
+                        sb.Append("^[.][0-9]+$").Append('|'); // ex. ".99"
+                        sb.Append("^[0-9]+$").Append('|'); // ex. "99"
+                        sb.Append("^[.]$"); // '.'
+                        ret = Regex.IsMatch(str, sb.ToString());
+                    }
+
                     break;
                 case TextFormatType.DecimalAndMinus:
-                    var sb = new StringBuilder();
-                    sb.Append("^[-]?[0-9]+[.][0-9]+$").Append('|'); // ex. "-0.0", "0.0"
-                    sb.Append("^[-]?[0-9]+[.]?$").Append('|'); // ex. "-0.", "-0", "0"
-                    sb.Append("^[.][0-9]*$").Append('|'); // ex. ".0", "."
-                    sb.Append("^[-]$");
-                    ret = Regex.IsMatch(str, sb.ToString());
+                    {
+                        var sb = new StringBuilder();
+                        sb.Append("^[-]?[0-9]+[.][0-9]+$").Append('|'); // ex. "-0.0", "0.0"
+                        sb.Append("^[-]?[0-9]+[.]?$").Append('|'); // ex. "-0.", "-0", "0"
+                        sb.Append("^[.][0-9]*$").Append('|'); // ex. ".0", "."
+                        sb.Append("^[-]$"); // '-'
+                        ret = Regex.IsMatch(str, sb.ToString());
+                    }
+
                     break;
                 default:
                     throw new NotImplementedException();

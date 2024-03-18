@@ -136,7 +136,7 @@ namespace WpfLibrary.Behavior
             //キャレット位置に文字列挿入
             string pastedText = InsertTextAtCaretPosition(textBox, correctedText);
            
-            //制限長文だけを設定
+            //制限長分だけを設定
             textBox.Text = pastedText.Substring(0, textBox.MaxLength);
 
             //キャレット設定

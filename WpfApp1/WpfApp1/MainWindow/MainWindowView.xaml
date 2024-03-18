@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1.MainWindow"
         xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
         xmlns:wpfLib="clr-namespace:WpfLibrary.Converter;assembly=WpfLibrary"
+        xmlns:behavior="clr-namespace:WpfLibrary.Behavior;assembly=WpfLibrary"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="MainWindow" d:Height="450" d:Width="500"
@@ -57,7 +58,8 @@
             <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Height="20" Width="100" HorizontalAlignment="Left" Text="{Binding Text2.Value}"/>
             <Rectangle Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Fill="Red" Height="20" Width="3" Margin="0,5"
                        Visibility="{Binding IsText2Changed.Value, Converter={StaticResource boolToVisibility}}"/>
-            <TextBox Grid.Column="1" Grid.Row="2" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"
+                     behavior:CharacterLimitBehavior.CharactersType="DecimalAndMinus"/>
             <Rectangle Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Fill="Red" Width="3" Margin="0,5"
                        Visibility="{Binding IsNumberChanged.Value, Converter={StaticResource boolToVisibility}}"/>
             <CheckBox Grid.Column="1" Grid.Row="3" Margin="5" Content="Sample Text" HorizontalAlignment="Left"

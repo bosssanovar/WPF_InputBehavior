@@ -17,6 +17,11 @@ namespace ClassLibrary
     public enum AvailableCharactersType
     {
         /// <summary>
+        /// 制限なし
+        /// </summary>
+        None,
+
+        /// <summary>
         /// 半角英数字
         /// </summary>
         HalfWidthAlphanumeric,

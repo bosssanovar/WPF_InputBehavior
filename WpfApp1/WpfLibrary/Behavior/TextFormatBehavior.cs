@@ -9,6 +9,8 @@ namespace WpfLibrary.Behavior
 {
     public class TextFormatBehavior : Behavior<TextBox>
     {
+        #region TextFormatProperty
+
         /// <summary>
         /// 入力文字を制限します。
         /// </summary>
@@ -33,7 +35,7 @@ namespace WpfLibrary.Behavior
         }
 
         private static void TextFormatChanged
-            (DependencyObject sender, DependencyPropertyChangedEventArgs e)
+           (DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var textBox = sender as TextBox;
             if (textBox == null) return;
@@ -66,6 +68,37 @@ namespace WpfLibrary.Behavior
                 InputMethod.SetIsInputMethodEnabled(textBox, true);
             }
         }
+
+        #endregion
+
+        #region BytesSJisProperty
+
+        /// <summary>
+        /// Shift-JISでのバイト数。
+        /// </summary>
+        public static readonly DependencyProperty BytesSJisProperty =
+                    DependencyProperty.RegisterAttached(
+                        "BytesSJis",
+                        typeof(int),
+                        typeof(TextFormatBehavior),
+                        new UIPropertyMetadata(0)
+                    );
+
+        [AttachedPropertyBrowsableForType(typeof(TextBox))]
+        public static int GetBytesSJis(DependencyObject obj)
+        {
+            return (int)obj.GetValue(BytesSJisProperty);
+        }
+
+        [AttachedPropertyBrowsableForType(typeof(TextBox))]
+        public static void SetBytesSJis(DependencyObject obj, int value)
+        {
+            obj.SetValue(BytesSJisProperty, value);
+        }
+
+        #endregion
+
+        #region Handler
 
         private static void TextBox_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -103,6 +136,13 @@ namespace WpfLibrary.Behavior
             {
                 e.Handled = true;
             }
+
+            // 文字数が超過する入力を拒否
+            if ((GetBytesSJis(textBox) != 0)
+                && (insertedText.GetShiftJisByteCount() > GetBytesSJis(textBox)))
+            {
+                e.Handled = true;
+            }
         }
 
         private static void AssociatedObject_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -131,18 +171,35 @@ namespace WpfLibrary.Behavior
             if (!isText) return;
             string text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
             string correctedText = text.ExtractOnlyAbailableCharacters(GetTextFormat(textBox));
-            if(string.IsNullOrEmpty(correctedText)) return;
+            if (string.IsNullOrEmpty(correctedText)) return;
 
             //キャレット位置に文字列挿入
             string pastedText = InsertTextAtCaretPosition(textBox, correctedText);
-           
+
             //制限長分だけを設定
-            textBox.Text = pastedText.Substring(0, textBox.MaxLength);
+            if (textBox.MaxLength == 0 // MaxLengthの初期値(未制限)0
+                && GetBytesSJis(textBox) == 0) // BytesSJisPropertyの初期値（未制限）０
+            {
+                // 文字数制限なし
+                textBox.Text = pastedText;
+            }
+            else if (textBox.MaxLength != 0 && GetBytesSJis(textBox) == 0) // MaxLengthだけ指定
+            {
+                textBox.Text = pastedText.Substring(0, textBox.MaxLength);
+            }
+            else // BytesSJisPropertyが指定されていればそちらを優先
+            {
+                textBox.Text = pastedText.SubstringSJisByteCount(GetBytesSJis(textBox));
+            }
 
             //キャレット設定
             int cursorPosition = textBox.SelectionStart;
             textBox.SelectionStart = cursorPosition + correctedText.Length;
         }
+
+        #endregion
+
+        #region Method
 
         private static string InsertTextAtCaretPosition(TextBox textBox, string str)
         {
@@ -161,5 +218,7 @@ namespace WpfLibrary.Behavior
 
             return text;
         }
+
+        #endregion
     }
 }

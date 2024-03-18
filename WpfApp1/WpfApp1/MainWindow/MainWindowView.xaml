@@ -55,9 +55,11 @@
 
             <TextBox Grid.Column="1" Grid.Row="0" Margin="5" Width="200" HorizontalAlignment="Left" Text="{Binding Text.Value}"
                      Foreground="{Binding IsTextChanged.Value, Converter={StaticResource boolToColorConverter}}"
-                     behavior:TextFormatBehavior.TextFormat="HalfWidthAlphanumeric" MaxLength="10"/>
+                     behavior:TextFormatBehavior.TextFormat="HalfWidthAlphanumeric"
+                     behavior:TextFormatBehavior.BytesSJis="10"/>
             <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Height="20" Width="100" HorizontalAlignment="Left" Text="{Binding Text2.Value}"
-                     behavior:TextFormatBehavior.TextFormat="UpToJisLevel1KanjiSet" MaxLength="8"/>
+                     behavior:TextFormatBehavior.TextFormat="UpToJisLevel1KanjiSet"
+                     behavior:TextFormatBehavior.BytesSJis="8"/>
             <Rectangle Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Fill="Red" Height="20" Width="3" Margin="0,5"
                        Visibility="{Binding IsText2Changed.Value, Converter={StaticResource boolToVisibility}}"/>
             <TextBox Grid.Column="1" Grid.Row="2" Margin="5" Width="100" HorizontalAlignment="Left" Text="{Binding Number.Value}"

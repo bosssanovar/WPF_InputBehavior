@@ -134,9 +134,10 @@ namespace WpfLibrary.Behavior
             if(string.IsNullOrEmpty(correctedText)) return;
 
             //キャレット位置に文字列挿入
-            string wk = InsertTextAtCaretPosition(textBox, correctedText);
-            // TODO K.I : 有効文字数だけをペーストする
-            textBox.Text = wk;
+            string pastedText = InsertTextAtCaretPosition(textBox, correctedText);
+           
+            //制限長文だけを設定
+            textBox.Text = pastedText.Substring(0, textBox.MaxLength);
 
             //キャレット設定
             int cursorPosition = textBox.SelectionStart;

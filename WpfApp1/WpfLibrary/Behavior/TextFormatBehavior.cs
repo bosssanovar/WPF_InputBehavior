@@ -7,32 +7,32 @@ using System.Text.RegularExpressions;
 
 namespace WpfLibrary.Behavior
 {
-    public class CharacterLimitBehavior : Behavior<TextBox>
+    public class TextFormatBehavior : Behavior<TextBox>
     {
         /// <summary>
         /// 入力文字を制限します。
         /// </summary>
-        public static readonly DependencyProperty CharactersTypeProperty =
+        public static readonly DependencyProperty TextFormatProperty =
                     DependencyProperty.RegisterAttached(
-                        "CharactersType",
-                        typeof(AvailableCharactersType),
-                        typeof(CharacterLimitBehavior),
-                        new UIPropertyMetadata(AvailableCharactersType.None, CharactersTypeChanged)
+                        "TextFormat",
+                        typeof(TextFormatType),
+                        typeof(TextFormatBehavior),
+                        new UIPropertyMetadata(TextFormatType.None, TextFormatChanged)
                     );
 
         [AttachedPropertyBrowsableForType(typeof(TextBox))]
-        public static AvailableCharactersType GetCharactersType(DependencyObject obj)
+        public static TextFormatType GetTextFormat(DependencyObject obj)
         {
-            return (AvailableCharactersType)obj.GetValue(CharactersTypeProperty);
+            return (TextFormatType)obj.GetValue(TextFormatProperty);
         }
 
         [AttachedPropertyBrowsableForType(typeof(TextBox))]
-        public static void SetCharactersType(DependencyObject obj, AvailableCharactersType value)
+        public static void SetTextFormat(DependencyObject obj, TextFormatType value)
         {
-            obj.SetValue(CharactersTypeProperty, value);
+            obj.SetValue(TextFormatProperty, value);
         }
 
-        private static void CharactersTypeChanged
+        private static void TextFormatChanged
             (DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -43,8 +43,8 @@ namespace WpfLibrary.Behavior
             textBox.PreviewTextInput -= AssociatedObject_PreviewTextInput;
             textBox.PreviewLostKeyboardFocus -= TextBox_PreviewLostKeyboardFocus;
             DataObject.RemovePastingHandler(textBox, PastingHandler);
-            var newValue = (AvailableCharactersType)e.NewValue;
-            if (newValue is not AvailableCharactersType.None)
+            var newValue = (TextFormatType)e.NewValue;
+            if (newValue is not TextFormatType.None)
             {
                 textBox.PreviewKeyDown += AssociatedObject_PreviewKeyDown;
                 textBox.PreviewTextInput += AssociatedObject_PreviewTextInput;
@@ -53,11 +53,11 @@ namespace WpfLibrary.Behavior
             }
 
             // IMEモードを無効化
-            if (newValue is AvailableCharactersType.HalfWidthAlphanumeric
-                || newValue is AvailableCharactersType.Number
-                || newValue is AvailableCharactersType.NumberAndMinus
-                || newValue is AvailableCharactersType.Decimal
-                || newValue is AvailableCharactersType.DecimalAndMinus)
+            if (newValue is TextFormatType.HalfWidthAlphanumeric
+                || newValue is TextFormatType.Number
+                || newValue is TextFormatType.NumberAndMinus
+                || newValue is TextFormatType.Decimal
+                || newValue is TextFormatType.DecimalAndMinus)
             {
                 InputMethod.SetIsInputMethodEnabled(textBox, false);
             }
@@ -78,10 +78,10 @@ namespace WpfLibrary.Behavior
             }
 
             // ブランク時には０を挿入
-            if (GetCharactersType(textBox) is AvailableCharactersType.Number
-                || GetCharactersType(textBox) is AvailableCharactersType.NumberAndMinus
-                || GetCharactersType(textBox) is AvailableCharactersType.Decimal
-                || GetCharactersType(textBox) is AvailableCharactersType.DecimalAndMinus)
+            if (GetTextFormat(textBox) is TextFormatType.Number
+                || GetTextFormat(textBox) is TextFormatType.NumberAndMinus
+                || GetTextFormat(textBox) is TextFormatType.Decimal
+                || GetTextFormat(textBox) is TextFormatType.DecimalAndMinus)
             {
                 textBox.Text = "0";
             }
@@ -93,14 +93,14 @@ namespace WpfLibrary.Behavior
             if (textBox == null) return;
 
             // 利用可能文字以外の入力を拒否
-            if (!e.Text.IsFormatValid(GetCharactersType(textBox)))
+            if (!e.Text.IsFormatValid(GetTextFormat(textBox)))
             {
                 e.Handled = true;
             }
 
             // 形式不正となる文字の入力を拒否
             var insertedText = InsertTextAtCaretPosition(textBox, e.Text);
-            if (!insertedText.IsFormatValid(GetCharactersType(textBox)))
+            if (!insertedText.IsFormatValid(GetTextFormat(textBox)))
             {
                 e.Handled = true;
             }
@@ -112,7 +112,7 @@ namespace WpfLibrary.Behavior
             if (textBox == null) return;
 
             // PreviewTextInputでは半角スペースを検知できないので、PreviewKeyDownで検知
-            if (e.Key == Key.Space && !' '.IsFormatValid(GetCharactersType(textBox)))
+            if (e.Key == Key.Space && !' '.IsFormatValid(GetTextFormat(textBox)))
             {
                 e.Handled = true;
             }
@@ -120,6 +120,8 @@ namespace WpfLibrary.Behavior
 
         private static void PastingHandler(object sender, DataObjectPastingEventArgs e)
         {
+            e.CancelCommand();// 自前でペースト処理を実現しているため、標準動作はキャンセル
+
             var textBox = sender as TextBox;
             if (textBox == null) return;
 
@@ -129,11 +131,11 @@ namespace WpfLibrary.Behavior
             var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
             if (!isText) return;
             string text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
-            string correctedText = text.ExtractOnlyAbailableCharacters(GetCharactersType(textBox));
+            string correctedText = text.ExtractOnlyAbailableCharacters(GetTextFormat(textBox));
+            if(string.IsNullOrEmpty(correctedText)) return;
 
             //キャレット位置に文字列挿入
             string wk = InsertTextAtCaretPosition(textBox, correctedText);
-            e.CancelCommand();// 自前でペースト処理を実現しているため、標準動作はキャンセル
             textBox.Text = wk;
 
             //キャレット設定

@@ -14,7 +14,7 @@ namespace ClassLibrary
     /// <summary>
     /// 形式種別
     /// </summary>
-    public enum AvailableCharactersType
+    public enum TextFormatType
     {
         /// <summary>
         /// 制限なし
@@ -65,7 +65,7 @@ namespace ClassLibrary
         /// <param name="c">評価対象文字</param>
         /// <param name="type">形式種別</param>
         /// <returns>利用可能な文字の場合 true</returns>
-        public static bool IsFormatValid(this char c, AvailableCharactersType type)
+        public static bool IsFormatValid(this char c, TextFormatType type)
         {
             return c.ToString().IsFormatValid(type);
         }
@@ -76,7 +76,7 @@ namespace ClassLibrary
         /// <param name="str">評価対象文字列</param>
         /// <param name="type">形式種別</param>
         /// <returns>利用可能な文字のみの場合 true</returns>
-        public static bool IsFormatValid(this string str, AvailableCharactersType type)
+        public static bool IsFormatValid(this string str, TextFormatType type)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -87,24 +87,24 @@ namespace ClassLibrary
 
             switch (type)
             {
-                case AvailableCharactersType.HalfWidthAlphanumeric:
+                case TextFormatType.HalfWidthAlphanumeric:
                     ret = Regex.IsMatch(str, @"^[0-9a-zA-Z]+$");
                     break;
-                case AvailableCharactersType.UpToJisLevel1KanjiSet:
+                case TextFormatType.UpToJisLevel1KanjiSet:
                     ret = IsUntilJISKanjiLevel2(str, true);
                     break;
-                case AvailableCharactersType.Number:
+                case TextFormatType.Number:
                     ret = Regex.IsMatch(str, @"^[0-9]+$");
                     break;
-                case AvailableCharactersType.NumberAndMinus:
+                case TextFormatType.NumberAndMinus:
                     // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
                     ret = Regex.IsMatch(str, @"^[-]?[0-9]+$|^[-]$");
                     break;
-                case AvailableCharactersType.Decimal:
+                case TextFormatType.Decimal:
                     // TODO k.I : 並列パラメータを文字結合で１つ１つわかりやすく
                     ret = Regex.IsMatch(str, @"^[0-9]+[.][0-9]+$|^[0-9]+[.]$|^[.][0-9]+$|^[0-9]+$|^[.]$");
                     break;
-                case AvailableCharactersType.DecimalAndMinus:
+                case TextFormatType.DecimalAndMinus:
                     var sb = new StringBuilder();
                     sb.Append("^[-]?[0-9]+[.][0-9]+$").Append('|'); // ex. "-0.0", "0.0"
                     sb.Append("^[-]?[0-9]+[.]?$").Append('|'); // ex. "-0.", "-0", "0"
@@ -366,7 +366,7 @@ namespace ClassLibrary
         /// <param name="str">対象文字列</param>
         /// <param name="type">利用可能な文字種別</param>
         /// <returns>利用可能な文字のみの文字列</returns>
-        public static string ExtractOnlyAbailableCharacters(this string str, AvailableCharactersType type)
+        public static string ExtractOnlyAbailableCharacters(this string str, TextFormatType type)
         {
             if (str.IsFormatValid(type))
             {
@@ -386,18 +386,18 @@ namespace ClassLibrary
 
             switch (type)
             {
-                case AvailableCharactersType.HalfWidthAlphanumeric:
-                case AvailableCharactersType.UpToJisLevel1KanjiSet:
-                case AvailableCharactersType.Number:
+                case TextFormatType.HalfWidthAlphanumeric:
+                case TextFormatType.UpToJisLevel1KanjiSet:
+                case TextFormatType.Number:
                     //不正文字削除だけで完了している。
                     break;
-                case AvailableCharactersType.NumberAndMinus:
+                case TextFormatType.NumberAndMinus:
                     ret = CorrectNumberAndMinus(ret);
                     break;
-                case AvailableCharactersType.Decimal:
+                case TextFormatType.Decimal:
                     ret = CorrectDecimal(ret);
                     break;
-                case AvailableCharactersType.DecimalAndMinus:
+                case TextFormatType.DecimalAndMinus:
                     bool hasMainus = ret.Contains('-');
                     bool hasDecimalPoint = ret.Contains(".");
 

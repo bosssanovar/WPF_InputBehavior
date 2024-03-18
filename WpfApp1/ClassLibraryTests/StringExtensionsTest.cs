@@ -12,7 +12,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.HalfWidthAlphanumeric));
+                Assert.True(c.IsFormatValid(TextFormatType.HalfWidthAlphanumeric));
             }
         }
 
@@ -41,7 +41,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.HalfWidthAlphanumeric));
+                Assert.False(c.IsFormatValid(TextFormatType.HalfWidthAlphanumeric));
             }
         }
 
@@ -54,7 +54,7 @@ namespace ClassLibraryTests
         [InlineData("abcあdefg1ｱ亜Ą23ａ１", "abcdefg123")]// 末尾にも違反文字
         public void 半角英数を抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.HalfWidthAlphanumeric));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.HalfWidthAlphanumeric));
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.UpToJisLevel1KanjiSet));
+                Assert.True(c.IsFormatValid(TextFormatType.UpToJisLevel1KanjiSet));
             }
         }
 
@@ -96,7 +96,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.UpToJisLevel1KanjiSet));
+                Assert.False(c.IsFormatValid(TextFormatType.UpToJisLevel1KanjiSet));
             }
         }
 
@@ -109,7 +109,7 @@ namespace ClassLibraryTests
         [InlineData("WXYZ /+-?あアａＡｱ亜丗个丱丶丼丿乂乕", "WXYZ /+-?あアａＡｱ亜")]// 末尾にも違反文字
         public void JIS第1水準漢字までを抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.UpToJisLevel1KanjiSet));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.UpToJisLevel1KanjiSet));
         }
 
         #endregion
@@ -122,7 +122,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.Number));
+                Assert.True(c.IsFormatValid(TextFormatType.Number));
             }
         }
 
@@ -154,7 +154,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.Number));
+                Assert.False(c.IsFormatValid(TextFormatType.Number));
             }
         }
 
@@ -166,7 +166,7 @@ namespace ClassLibraryTests
         [InlineData("123456丕丗7890亂亅", "1234567890")]// 末尾にも違反文字
         public void 数字を抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.Number));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.Number));
         }
 
         #endregion
@@ -180,7 +180,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.NumberAndMinus));
+                Assert.True(c.IsFormatValid(TextFormatType.NumberAndMinus));
             }
         }
 
@@ -212,7 +212,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.NumberAndMinus));
+                Assert.False(c.IsFormatValid(TextFormatType.NumberAndMinus));
             }
         }
 
@@ -234,7 +234,7 @@ namespace ClassLibraryTests
         #endregion
         public void 数値とマイナスで数値として正しいかを判定＿ＯＫ(string str)
         {
-            Assert.True(str.IsFormatValid(AvailableCharactersType.NumberAndMinus));
+            Assert.True(str.IsFormatValid(TextFormatType.NumberAndMinus));
         }
 
         [Theory]
@@ -254,7 +254,7 @@ namespace ClassLibraryTests
         #endregion
         public void 数値とマイナスで数値として正しいかを判定＿NG(string str)
         {
-            Assert.False(str.IsFormatValid(AvailableCharactersType.NumberAndMinus));
+            Assert.False(str.IsFormatValid(TextFormatType.NumberAndMinus));
         }
 
         [Theory]
@@ -287,7 +287,7 @@ namespace ClassLibraryTests
         #endregion
         public void 数値とマイナスを抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.NumberAndMinus));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.NumberAndMinus));
         }
 
         #endregion
@@ -301,7 +301,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.Decimal));
+                Assert.True(c.IsFormatValid(TextFormatType.Decimal));
             }
         }
 
@@ -333,7 +333,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.Decimal));
+                Assert.False(c.IsFormatValid(TextFormatType.Decimal));
             }
         }
 
@@ -391,7 +391,7 @@ namespace ClassLibraryTests
         #endregion
         public void 小数で数値として正しいかを判定＿ＯＫ(string str)
         {
-            Assert.True(str.IsFormatValid(AvailableCharactersType.Decimal));
+            Assert.True(str.IsFormatValid(TextFormatType.Decimal));
         }
 
         [Theory]
@@ -407,7 +407,7 @@ namespace ClassLibraryTests
         [InlineData("9.9.")]
         public void 小数で数値として正しいかを判定＿NG(string str)
         {
-            Assert.False(str.IsFormatValid(AvailableCharactersType.Decimal));
+            Assert.False(str.IsFormatValid(TextFormatType.Decimal));
         }
 
         [Theory]
@@ -438,7 +438,7 @@ namespace ClassLibraryTests
         #endregion
         public void 小数を抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.Decimal));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.Decimal));
         }
 
         #endregion
@@ -452,7 +452,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.True(c.IsFormatValid(AvailableCharactersType.DecimalAndMinus));
+                Assert.True(c.IsFormatValid(TextFormatType.DecimalAndMinus));
             }
         }
 
@@ -484,7 +484,7 @@ namespace ClassLibraryTests
         {
             foreach (var c in str)
             {
-                Assert.False(c.IsFormatValid(AvailableCharactersType.DecimalAndMinus));
+                Assert.False(c.IsFormatValid(TextFormatType.DecimalAndMinus));
             }
         }
 
@@ -555,7 +555,7 @@ namespace ClassLibraryTests
         #endregion
         public void 小数とマイナスで数値として正しいかを判定＿ＯＫ(string str)
         {
-            Assert.True(str.IsFormatValid(AvailableCharactersType.DecimalAndMinus));
+            Assert.True(str.IsFormatValid(TextFormatType.DecimalAndMinus));
         }
 
         [Theory]
@@ -595,7 +595,7 @@ namespace ClassLibraryTests
         #endregion
         public void 小数とマイナスで数値として正しいかを判定＿NG(string str)
         {
-            Assert.False(str.IsFormatValid(AvailableCharactersType.DecimalAndMinus));
+            Assert.False(str.IsFormatValid(TextFormatType.DecimalAndMinus));
         }
 
         [Theory]
@@ -689,7 +689,7 @@ namespace ClassLibraryTests
         #endregion
         public void 小数とマイナスを抽出(string input, string output)
         {
-            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(AvailableCharactersType.DecimalAndMinus));
+            Assert.Equal(output, input.ExtractOnlyAbailableCharacters(TextFormatType.DecimalAndMinus));
         }
 
         #endregion

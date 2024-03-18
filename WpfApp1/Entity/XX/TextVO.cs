@@ -7,7 +7,7 @@ namespace Entity.XX
     public record TextVO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
     {
         private const int MaxLength = 10;
-        private const AvailableCharactersType Type = AvailableCharactersType.HalfWidthAlphanumeric;
+        private const TextFormatType Type = TextFormatType.HalfWidthAlphanumeric;
 
         public List<(string Name, string Value)> SettingInfos
         {

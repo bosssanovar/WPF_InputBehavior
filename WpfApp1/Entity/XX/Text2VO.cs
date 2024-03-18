@@ -5,7 +5,7 @@ namespace Entity.XX
     public record Text2VO(string Content) : ValueObjectBase<string>(Content), IInputLimit<string>, ISettingInfos
     {
         private const int MaxByteCount = 8;
-        private const AvailableCharactersType Type = AvailableCharactersType.UpToJisLevel1KanjiSet;
+        private const TextFormatType Type = TextFormatType.UpToJisLevel1KanjiSet;
 
         public List<(string Name, string Value)> SettingInfos
         {

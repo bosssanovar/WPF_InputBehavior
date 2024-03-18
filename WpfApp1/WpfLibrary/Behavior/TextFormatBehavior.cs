@@ -72,18 +72,17 @@ namespace WpfLibrary.Behavior
             var textBox = sender as TextBox;
             if (textBox == null) return;
 
-            if (!string.IsNullOrEmpty(textBox.Text))
-            {
-                return;
-            }
-
-            // ブランク時には０を挿入
             if (GetTextFormat(textBox) is TextFormatType.Number
                 || GetTextFormat(textBox) is TextFormatType.NumberAndMinus
                 || GetTextFormat(textBox) is TextFormatType.Decimal
                 || GetTextFormat(textBox) is TextFormatType.DecimalAndMinus)
             {
-                textBox.Text = "0";
+                // ブランク時、または数値として不正文字列の場合には０を挿入
+                if (string.IsNullOrEmpty(textBox.Text)
+                    || !double.TryParse(textBox.Text, out double _))
+                {
+                    textBox.Text = "0";
+                }
             }
         }
 
@@ -136,6 +135,7 @@ namespace WpfLibrary.Behavior
 
             //キャレット位置に文字列挿入
             string wk = InsertTextAtCaretPosition(textBox, correctedText);
+            // TODO K.I : 有効文字数だけをペーストする
             textBox.Text = wk;
 
             //キャレット設定

@@ -177,34 +177,37 @@ namespace WpfLibrary.Behavior
             string correctedText = text.ExtractOnlyAbailableCharacters(GetTextFormat(textBox));
             if (string.IsNullOrEmpty(correctedText)) return;
 
-            //キャレット位置に文字列挿入
-            string pastedText = InsertTextAtCaretPosition(textBox, correctedText);
-
-            //制限長分だけを設定
+            // 残りの入力可能文字数分だけ挿入する
+            string insertableText;
             if (textBox.MaxLength == 0 // MaxLengthの初期値(未制限)0
                 && GetBytesSJis(textBox) == 0) // BytesSJisPropertyの初期値（未制限）０
             {
                 // 文字数制限なし
-                textBox.Text = pastedText;
+                insertableText = correctedText;
             }
             else if (textBox.MaxLength != 0 && GetBytesSJis(textBox) == 0) // MaxLengthだけ指定
             {
-                if (textBox.MaxLength < pastedText.Length)
+                if (textBox.MaxLength < (correctedText.Length + textBox.Text.Length))
                 {
-                    textBox.Text = pastedText.Substring(0, textBox.MaxLength);
+                    var insertableLength = textBox.MaxLength - textBox.Text.Length;
+                    insertableText = correctedText.Substring(0, insertableLength);
                 }
                 else
                 {
-                    textBox.Text = pastedText;
+                    insertableText = correctedText;
                 }
             }
             else // BytesSJisPropertyが指定されていればそちらを優先
             {
-                textBox.Text = pastedText.SubstringSJisByteCount(GetBytesSJis(textBox));
+                var insertableBytes = GetBytesSJis(textBox) - textBox.Text.GetShiftJisByteCount();
+                insertableText = correctedText.SubstringSJisByteCount(insertableBytes);
             }
 
+            //キャレット位置に文字列挿入
+            textBox.Text = InsertTextAtCaretPosition(textBox, insertableText);
+
             //キャレット設定
-            textBox.SelectionStart = caretPosition + correctedText.Length;
+            textBox.SelectionStart = caretPosition + insertableText.Length;
         }
 
         #endregion

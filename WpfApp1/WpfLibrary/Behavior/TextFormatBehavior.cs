@@ -189,7 +189,8 @@ namespace WpfLibrary.Behavior
             {
                 if (textBox.MaxLength < (correctedText.Length + textBox.Text.Length)) // 指定文字数以内となる場合
                 {
-                    var insertableLength = textBox.MaxLength - textBox.Text.Length;
+                    var toBeRemovedLength = textBox.SelectedText.Length;
+                    var insertableLength = textBox.MaxLength - textBox.Text.Length + toBeRemovedLength;
                     insertableText = correctedText.Substring(0, insertableLength);
                 }
                 else
@@ -199,7 +200,9 @@ namespace WpfLibrary.Behavior
             }
             else // BytesSJisPropertyが指定されていればそちらを優先
             {
-                var insertableBytes = GetBytesSJis(textBox) - textBox.Text.GetShiftJisByteCount();
+                var toBeRemovedText = textBox.Text.Substring(textBox.SelectionStart, textBox.SelectedText.Length);
+                var toBeRemovedBytes = toBeRemovedText.GetShiftJisByteCount();
+                var insertableBytes = GetBytesSJis(textBox) - textBox.Text.GetShiftJisByteCount() + toBeRemovedBytes;
                 insertableText = correctedText.SubstringSJisByteCount(insertableBytes);
             }
 

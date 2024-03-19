@@ -178,12 +178,12 @@ namespace WpfLibrary.Behavior
             if (string.IsNullOrEmpty(correctedText)) return;
 
             // 残りの入力可能文字数分だけ挿入する
-            string insertableText;
+            string insertText;
             if (textBox.MaxLength == 0 // MaxLengthの初期値(未制限)0
                 && GetBytesSJis(textBox) == 0) // BytesSJisPropertyの初期値（未制限）０
             {
                 // 文字数制限なし
-                insertableText = correctedText;
+                insertText = correctedText;
             }
             else if (textBox.MaxLength != 0 && GetBytesSJis(textBox) == 0) // MaxLengthだけ指定
             {
@@ -191,11 +191,11 @@ namespace WpfLibrary.Behavior
                 var insertableLength = textBox.MaxLength - textBox.Text.Length + toBeRemovedLength;
                 if (correctedText.Length > insertableLength) // 指定文字数を超える場合
                 {
-                    insertableText = correctedText.Substring(0, insertableLength);
+                    insertText = correctedText.Substring(0, insertableLength);
                 }
                 else
                 {
-                    insertableText = correctedText;
+                    insertText = correctedText;
                 }
             }
             else // BytesSJisPropertyが指定されていればそちらを優先
@@ -203,14 +203,14 @@ namespace WpfLibrary.Behavior
                 var toBeRemovedText = textBox.Text.Substring(textBox.SelectionStart, textBox.SelectedText.Length);
                 var toBeRemovedBytes = toBeRemovedText.GetShiftJisByteCount();
                 var insertableBytes = GetBytesSJis(textBox) - textBox.Text.GetShiftJisByteCount() + toBeRemovedBytes;
-                insertableText = correctedText.SubstringSJisByteCount(insertableBytes);
+                insertText = correctedText.SubstringSJisByteCount(insertableBytes);
             }
 
             //キャレット位置に文字列挿入
-            textBox.Text = InsertTextAtCaretPosition(textBox, insertableText);
+            textBox.Text = InsertTextAtCaretPosition(textBox, insertText);
 
             //キャレット設定
-            textBox.SelectionStart = caretPosition + insertableText.Length;
+            textBox.SelectionStart = caretPosition + insertText.Length;
         }
 
         #endregion

@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Xaml.Behaviors;
 using ClassLibrary;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace WpfLibrary.Behavior
 {
@@ -166,6 +167,9 @@ namespace WpfLibrary.Behavior
 
             // 貼り付け時に文字列を補正
 
+            //キャレット位置保存
+            int cursorPosition = textBox.SelectionStart;
+
             // ペーストする文字列から有効文字列を抽出
             var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
             if (!isText) return;
@@ -185,7 +189,14 @@ namespace WpfLibrary.Behavior
             }
             else if (textBox.MaxLength != 0 && GetBytesSJis(textBox) == 0) // MaxLengthだけ指定
             {
-                textBox.Text = pastedText.Substring(0, textBox.MaxLength);
+                if (textBox.MaxLength < pastedText.Length)
+                {
+                    textBox.Text = pastedText.Substring(0, textBox.MaxLength);
+                }
+                else
+                {
+                    textBox.Text = pastedText;
+                }
             }
             else // BytesSJisPropertyが指定されていればそちらを優先
             {
@@ -193,8 +204,8 @@ namespace WpfLibrary.Behavior
             }
 
             //キャレット設定
-            int cursorPosition = textBox.SelectionStart;
             textBox.SelectionStart = cursorPosition + correctedText.Length;
+            Debug.WriteLine($"cursorPosition[{cursorPosition}] + correctedText.Length[{correctedText.Length}]");
         }
 
         #endregion

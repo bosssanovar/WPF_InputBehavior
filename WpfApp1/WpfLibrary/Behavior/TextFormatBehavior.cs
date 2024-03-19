@@ -206,8 +206,16 @@ namespace WpfLibrary.Behavior
                 insertText = correctedText.SubstringSJisByteCount(insertableBytes);
             }
 
-            //キャレット位置に文字列挿入
-            textBox.Text = InsertTextAtCaretPosition(textBox, insertText);
+            // キャレット位置に文字列挿入
+            var replaceText = InsertTextAtCaretPosition(textBox, insertText);
+
+            // 文字列の形式不正となる場合には、ペーストを中断。
+            if (!replaceText.IsFormatValid(GetTextFormat(textBox)))
+            {
+                return;
+            }
+
+            textBox.Text = replaceText;
 
             //キャレット設定
             textBox.SelectionStart = caretPosition + insertText.Length;

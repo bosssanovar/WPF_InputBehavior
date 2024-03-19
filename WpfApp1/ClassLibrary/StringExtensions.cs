@@ -57,7 +57,7 @@ namespace ClassLibrary
     /// </summary>
     public static class StringExtensions
     {
-        #region 利用可能な文字のみかを判定
+        #region 利用可能な形式かを判定
 
         /// <summary>
         /// 有効な形式となっているかを判定します。
@@ -374,7 +374,7 @@ namespace ClassLibrary
 
         #endregion
 
-        #region 利用可能な文字のみに補正
+        #region 利用可能な形式に補正
 
         /// <summary>
         /// 利用可能な文字のみを抽出します。

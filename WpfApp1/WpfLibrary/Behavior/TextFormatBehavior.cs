@@ -168,7 +168,7 @@ namespace WpfLibrary.Behavior
             // 貼り付け時に文字列を補正
 
             //キャレット位置保存
-            int cursorPosition = textBox.SelectionStart;
+            int caretPosition = textBox.SelectionStart;
 
             // ペーストする文字列から有効文字列を抽出
             var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
@@ -204,8 +204,7 @@ namespace WpfLibrary.Behavior
             }
 
             //キャレット設定
-            textBox.SelectionStart = cursorPosition + correctedText.Length;
-            Debug.WriteLine($"cursorPosition[{cursorPosition}] + correctedText.Length[{correctedText.Length}]");
+            textBox.SelectionStart = caretPosition + correctedText.Length;
         }
 
         #endregion

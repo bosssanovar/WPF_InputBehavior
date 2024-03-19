@@ -187,7 +187,7 @@ namespace WpfLibrary.Behavior
             }
             else if (textBox.MaxLength != 0 && GetBytesSJis(textBox) == 0) // MaxLengthだけ指定
             {
-                if (textBox.MaxLength < (correctedText.Length + textBox.Text.Length)) // 指定文字数以内となる場合
+                if (textBox.MaxLength < (correctedText.Length + textBox.Text.Length)) // 指定文字数を超える場合
                 {
                     var toBeRemovedLength = textBox.SelectedText.Length;
                     var insertableLength = textBox.MaxLength - textBox.Text.Length + toBeRemovedLength;
